@@ -125,7 +125,7 @@ header span{color:#1d9bf0}
 <!-- SIDEBAR -->
 <div class="sidebar">
   <h3>RashtraSetu</h3>
-  <a href="home.html" class="menu-item"><i class="fa-solid fa-house"></i>Home</a>
+  <a href="../index.html" class="menu-item"><i class="fa-solid fa-house"></i>Home</a>
   <a href="search.html" class="menu-item"><i class="fa-solid fa-search"></i>Search</a>
   <a href="explore.html" class="menu-item"><i class="fa-solid fa-compass"></i>Explore</a>
   <a href="add-issue.html" class="menu-item"><i class="fa-solid fa-plus-circle"></i>Add Issues</a>
@@ -134,8 +134,15 @@ header span{color:#1d9bf0}
   <a href="politician_property.html" class="menu-item"><i class="fa-solid fa-user-tie"></i>Politician Properties</a>
   <a href="updates.html" class="menu-item"><i class="fa-solid fa-bell"></i>Updates</a>
   <a href="profile.html" class="menu-item"><i class="fa-solid fa-user"></i>Profile</a>
-  <a href="#" class="menu-item"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+  <a href="#" onclick="logout()" class="menu-item"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
 </div>
+
+<script>
+  function logout(){
+    localStorage.removeItem('user');
+    window.location.href='../index.html';
+  }
+</script>
 
 
 <style>
@@ -244,26 +251,63 @@ body{
 }
 </style>
 
-<header>
-<h4>Rashtra<span>Setu</span></h4>
-<button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#editModal">
-Edit Profile
-</button>
-</header>
 
 <!-- LOGIN BOX -->
 <div class="login-box" id="loginBox">
-<h3><i class="fa-solid fa-user-lock"></i> Citizen Login</h3>
-<div class="mb-3">
-<label class="form-label">Mobile Number</label>
-<input type="text" id="mobile" class="form-control" placeholder="Enter 10-digit mobile">
-</div>
-<div class="mb-3">
-<label class="form-label">PIN Code</label>
-<input type="text" id="pincode" class="form-control" placeholder="Enter your area PIN">
-</div>
-<button class="btn btn-primary w-100" onclick="login()">Login</button>
-<div class="text-center mt-3 text-muted">Secure | Local | Transparent</div>
+    <div class="d-flex justify-content-around mb-4">
+        <button class="btn btn-link text-decoration-none fw-bold" id="tabLogin" onclick="switchTab('login')" style="color:#1d9bf0; border-bottom: 2px solid #1d9bf0;">Login</button>
+        <button class="btn btn-link text-decoration-none text-muted" id="tabSignup" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <div id="loginForm">
+        <h3><i class="fa-solid fa-user-lock"></i>  Login</h3>
+        <div class="mb-3">
+            <label class="form-label">Type</label>
+            <select class="form-select" id="loginType">
+                <option value="citizen">Citizen</option>
+                <option value="leader">Leader</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Mobile Number</label>
+            <input type="text" id="mobile" class="form-control" placeholder="Enter 10-digit mobile">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Enter your password">
+        </div>
+        <button class="btn btn-primary w-100" onclick="login()">Login</button>
+    </div>
+
+    <div id="signupForm" style="display:none;">
+        <h3><i class="fa-solid fa-user-plus"></i>  Sign Up</h3>
+        <div class="mb-3">
+            <label class="form-label">Type</label>
+            <select class="form-select" id="signupType">
+                <option value="citizen">Citizen</option>
+                <option value="leader">Leader</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" id="signupName" class="form-control" placeholder="Enter your name">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Mobile Number</label>
+            <input type="text" id="signupMobile" class="form-control" placeholder="Enter 10-digit mobile">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">PIN Code</label>
+            <input type="text" id="signupPincode" class="form-control" placeholder="Enter your area PIN">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" id="signupPassword" class="form-control" placeholder="Create Password">
+        </div>
+        <button class="btn btn-success w-100" onclick="signup()">Sign Up</button>
+    </div>
+
+    <div class="text-center mt-3 text-muted">Secure | Local | Transparent</div>
 </div>
 
 <!-- PROFILE WRAPPER -->
@@ -381,16 +425,97 @@ const areaData = {
 "411044":"Rapid development and infrastructure pressure"
 };
 
-function login(){
+function switchTab(tab){
+    if(tab === 'login'){
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('signupForm').style.display = 'none';
+        document.getElementById('tabLogin').style.color = '#1d9bf0';
+        document.getElementById('tabLogin').style.borderBottom = '2px solid #1d9bf0';
+        document.getElementById('tabLogin').classList.remove('text-muted');
+        
+        document.getElementById('tabSignup').style.color = '#6c757d';
+        document.getElementById('tabSignup').style.borderBottom = 'none';
+        document.getElementById('tabSignup').classList.add('text-muted');
+    } else {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'block';
+        document.getElementById('tabSignup').style.color = '#1d9bf0';
+        document.getElementById('tabSignup').style.borderBottom = '2px solid #1d9bf0';
+        document.getElementById('tabSignup').classList.remove('text-muted');
+        
+        document.getElementById('tabLogin').style.color = '#6c757d';
+        document.getElementById('tabLogin').style.borderBottom = 'none';
+        document.getElementById('tabLogin').classList.add('text-muted');
+    }
+}
+
+async function login(){
     const mobile=document.getElementById("mobile").value;
-    const pin=document.getElementById("pincode").value;
-    if(mobile.length!==10 || !areaData[pin]){
-        alert("Invalid Mobile Number or PIN Code");
+    const password=document.getElementById("password").value;
+    if(mobile.length!==10){
+        alert("Invalid Mobile Number");
         return;
     }
+    if(!password){
+        alert("Please enter a password");
+        return;
+    }
+    const res = await fetch("http://localhost:3000/api/auth/citizen/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({number:mobile, password})
+    })
+    if(res.status!==200){
+        alert("Login Failed. Please try again.");
+        return;
+    }
+    const data=await res.json();
+    localStorage.setItem("user", JSON.stringify(data.user));
+    enterApp(mobile, data.pincode,data.user.name);
+}
+
+async function signup(){
+    const type = document.getElementById("signupType").value;
+    const mobile=document.getElementById("signupMobile").value;
+    const name=document.getElementById("signupName").value;
+    const pin=document.getElementById("signupPincode").value;
+    const password=document.getElementById("signupPassword").value;
+    
+    if(mobile.length!==10){
+        alert("Invalid Mobile Number");
+        return;
+    }
+    if(!password){
+        alert("Please enter a password");
+        return;
+    }
+    
+    if(!areaData[pin]){
+        alert("Service not available in this PIN Code area yet.");
+        return;
+    }
+
+    alert("Signup Successful! Logging in...");
+    console.log(type, mobile, pin, password);
+    const res = await fetch("http://localhost:3000/api/auth/citizen/signup",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({number:mobile, name:name, pincode:pin, password})
+    })
+    if(res.status!==201){
+        alert("Signup Failed. Please try again.");
+        return;
+    }
+    const data=await res.json();
+    localStorage.setItem("user", JSON.stringify(data.user));
+    enterApp(mobile, pin,name);
+   console.log(data);
+}
+
+function enterApp(mobile, pin,name){
     document.getElementById("loginBox").style.display="none";
     document.getElementById("profileWrapper").style.display="block";
-    document.getElementById("viewName").innerText="Citizen " + mobile.slice(-4);
+    document.getElementById("viewName").innerText="Citizen " + name;
     document.getElementById("viewArea").innerText=pin;
     document.getElementById("viewWard").innerText="Ward Info";
     document.getElementById("areaFocusText").innerText=areaData[pin];
@@ -407,7 +532,12 @@ function saveProfile(){
     }
     bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
 }
-
+window.onload=()=>{
+    const user=JSON.parse(localStorage.getItem("user"));
+    if(user){
+        enterApp(user.number, user.pincode,user.name);
+    }
+}
 </script>
 
 </body>
