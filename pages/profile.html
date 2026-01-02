@@ -450,6 +450,7 @@ function switchTab(tab){
 }
 
 async function login(){
+    const type = document.getElementById("loginType").value;
     const mobile=document.getElementById("mobile").value;
     const password=document.getElementById("password").value;
     if(mobile.length!==10){
@@ -460,7 +461,9 @@ async function login(){
         alert("Please enter a password");
         return;
     }
-    const res = await fetch("http://localhost:3000/api/auth/citizen/login",{
+    console.log(type, mobile, password);
+    const url = type === 'citizen' ? "http://localhost:3000/api/auth/citizen/login" : "http://localhost:3000/api/auth/leader/login";
+    const res = await fetch(url,{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({number:mobile, password})
@@ -497,7 +500,8 @@ async function signup(){
 
     alert("Signup Successful! Logging in...");
     console.log(type, mobile, pin, password);
-    const res = await fetch("http://localhost:3000/api/auth/citizen/signup",{
+    const url = type === 'citizen' ? "http://localhost:3000/api/auth/citizen/signup" : "http://localhost:3000/api/auth/leader/signup";
+    const res = await fetch(url,{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({number:mobile, name:name, pincode:pin, password})
