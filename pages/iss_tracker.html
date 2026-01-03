@@ -152,6 +152,10 @@
             <strong>Description:</strong> ${issue.desc}
           </p>
           <p class="detail"><strong>Date Reported:</strong> ${new Date(issue.createdAt).toLocaleString()}</p>
+          <div class="comments-section">
+            <h6>Comments:</h6>
+            ${issue.comments.length > 0 ? issue.comments.map(comment => `<p>${comment.text}</p>`).join('') : '<p>No comments yet.</p>'}
+          </div>
         </div>
         `;
       };

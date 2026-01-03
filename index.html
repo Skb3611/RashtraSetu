@@ -97,6 +97,7 @@
   <a href="pages/search.html" class="menu-item"><i class="fa-solid fa-search"></i>Search</a>
   <a href="pages/explore.html" class="menu-item"><i class="fa-solid fa-compass"></i>Explore</a>
   <a href="pages/add-issue.html" class="menu-item"><i class="fa-solid fa-plus-circle"></i>Add Issues</a>
+  <a href="pages/add-bill.html" class="menu-item"><i class="fa-solid fa-plus-circle"></i>Add Bills</a>
   <a href="pages/janadicar-final.html" class="menu-item"><i class="fa-solid fa-gavel"></i>Janadhikar</a>
   <a href="pages/about_our_leaders.html" class="menu-item"><i class="fa-solid fa-users"></i>About Our Leaders</a>
   <a href="pages/politician_property.html" class="menu-item"><i class="fa-solid fa-user-tie"></i>Politician Properties</a>
@@ -108,6 +109,103 @@ function logout(){
 localstorage.clear()
 window.location.href="../index.html"
 }
+window.onload = async()=>{
+  const [issuesRes,billsRes] = await Promise.all([
+    fetch("http://localhost:3000/api/all-issues"),
+    fetch("http://localhost:3000/api/get-bills")
+  ]) 
+  const issues = (await issuesRes.json()).issues
+  const bills = (await billsRes.json()).bills
+  renderIssue(issues)
+  renderBills(bills)
+}
+const comment = (id,type)=>{
+const text = prompt("Enter your comment")
+if(text){
+  fetch("http://localhost:3000/api/comment",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      id,
+      type,
+      comment:text
+    })
+  }).then(()=>{
+    window.location.reload()
+  })
+}
+}
+const renderIssue = (issues)=>{
+ const issuesDivs =  issues.map(issue=>{
+    return `
+    <div class="post-card" data-id="seed-1">
+      <div class="post-header">
+        <div class="avatar">${issue.citizen.name[0].toUpperCase()}</div>
+              <div style="flex:1">
+                <div style="font-weight:700">${issue.citizen.name}</div>
+                <div class="post-meta"><small>${new Date(issue.createdAt).toLocaleString()} ·</small></div>
+              </div>
+            </div>
+            <div class="post-body">
+              ${issue.desc}
+            </div>
+            <div class="post-actions">
+              <button class="action-btn like-btn"><i class="fa-regular fa-heart"></i> <span>Like</span></button>
+              <button onclick={comment("${issue.id}","issue")} class="action-btn comment-btn"><i class="fa-regular fa-comment"></i> <span>Comment</span></button>
+              <button class="action-btn share-btn"><i class="fa-solid fa-share"></i> <span>Share</span></button>
+            </div>
+            <div class="post-comments">
+              ${issue.comments.length>0?issue.comments.map(comment=>{
+                console.log(comment)
+                return `  
+                <div class="comment-item">
+                  <div>${comment.text}</div>
+                </div>
+                `
+              }).join(""):"<div class='empty-hint'>No comments yet</div>"}
+              </div>
+          </div>
+          `
+          })
+          document.getElementById("voiceSection").innerHTML = issuesDivs.join(" ")
+
+  }
+  const renderBills = (bills)=>{
+    const billsDivs = bills.map(bill=>{
+      return `
+      <div class="post-card" data-id="seed-2">
+            <div class="post-header">
+              <div class="avatar" style="background:#fd7e14">${bill.leader.name[0].toUpperCase()}</div>
+              <div style="flex:1">
+                <div style="font-weight:700">${bill.leader.name}</div>
+                <div class="post-meta"><small>${new Date(bill.createdAt).toDateString()} <span class="meta-badge">Budget ₹${bill.budget}</span></small></div>
+              </div>
+            </div>
+            <div class="post-body">
+              ${bill.desc}
+            </div>
+            <div class="post-actions">
+              <button class="action-btn like-btn"><i class="fa-regular fa-heart"></i> <span>Like</span></button>
+              <button onclick={comment("${bill.id}","bill")} class="action-btn comment-btn"><i class="fa-regular fa-comment"></i> <span>Comment</span></button>
+              <button class="action-btn share-btn"><i class="fa-solid fa-share"></i> <span>Share</span></button>
+            </div>
+            <div class="post-comments">
+               ${bill.comments.length>0?bill.comments.map(comment=>{
+                console.log(comment)
+                return `  
+                <div class="comment-item">
+                  <div>${comment.text}</div>
+                </div>
+                `
+              }).join(""):"<div class='empty-hint'>No comments yet</div>"}
+              </div>
+          </div>
+            `
+            })
+            document.getElementById("powerSection").innerHTML = billsDivs.join(" ")
+  }
 </script>
 </div>
 
@@ -139,46 +237,12 @@ window.location.href="../index.html"
 
         <!-- PEOPLE VOICE -->
         <div id="voiceSection" data-section="voice">
-          <div class="post-card" data-id="seed-1">
-            <div class="post-header">
-              <div class="avatar">LR</div>
-              <div style="flex:1">
-                <div style="font-weight:700">Local Resident</div>
-                <div class="post-meta"><small>2 hours ago · <span class="meta-badge">Road</span></small></div>
-              </div>
-            </div>
-            <div class="post-body">
-              Garbage collection in our lane missed for 4 days — requesting pickup and spray disinfection.
-            </div>
-            <div class="post-actions">
-              <button class="action-btn like-btn"><i class="fa-regular fa-heart"></i> <span>Like</span></button>
-              <button class="action-btn comment-btn"><i class="fa-regular fa-comment"></i> <span>Comment</span></button>
-              <button class="action-btn share-btn"><i class="fa-solid fa-share"></i> <span>Share</span></button>
-            </div>
-            <div class="post-comments"></div>
-          </div>
+          <h2>Loading ...</h2>
         </div>
 
         <!-- POWER TRANSPARENCY -->
         <div id="powerSection" data-section="power" style="display:none;">
-          <div class="post-card" data-id="seed-2">
-            <div class="post-header">
-              <div class="avatar" style="background:#fd7e14">WO</div>
-              <div style="flex:1">
-                <div style="font-weight:700">Ward Office</div>
-                <div class="post-meta"><small>Yesterday · <span class="meta-badge">Budget ₹12,50,000</span></small></div>
-              </div>
-            </div>
-            <div class="post-body">
-              Park renovation contract: benches, lighting, grass replacement. Contractors and estimates published.
-            </div>
-            <div class="post-actions">
-              <button class="action-btn like-btn"><i class="fa-regular fa-heart"></i> <span>Like</span></button>
-              <button class="action-btn comment-btn"><i class="fa-regular fa-comment"></i> <span>Comment</span></button>
-              <button class="action-btn share-btn"><i class="fa-solid fa-share"></i> <span>Share</span></button>
-            </div>
-            <div class="post-comments"></div>
-          </div>
+          <h2>Loading ...</h2>
         </div>
 
       </div>
@@ -186,7 +250,7 @@ window.location.href="../index.html"
   </div>
 
   <!-- Floating Add Button -->
-  <button class="add-btn" id="openPostBtn" aria-label="Create post">+</button>
+  <!-- <button class="add-btn" id="openPostBtn" aria-label="Create post">+</button> -->
 
   <!-- Role Modal -->
   <div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">

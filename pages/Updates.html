@@ -82,6 +82,7 @@
   <a href="search.html" class="menu-item"><i class="fa-solid fa-search"></i>Search</a>
   <a href="explore.html" class="menu-item"><i class="fa-solid fa-compass"></i>Explore</a>
   <a href="add-issue.html" class="menu-item"><i class="fa-solid fa-plus-circle"></i>Add Issues</a>
+  <a href="add-bill.html" class="menu-item"><i class="fa-solid fa-plus-circle"></i>Add Bills</a>
   <a href="janadicar-final.html" class="menu-item"><i class="fa-solid fa-gavel"></i>Janadhikar</a>
   <a href="about_our_leaders.html" class="menu-item"><i class="fa-solid fa-users"></i>About Our Leaders</a>
   <a href="politician_property.html" class="menu-item"><i class="fa-solid fa-user-tie"></i>Politician Properties</a>
@@ -299,31 +300,11 @@ window.location.href="../index.html"
    Data (sample client-side dataset)
    Replace with real API calls in production
 --------------------------- */
-const updates = [
-  { id:1, category:'project', title:'Smart Road Development Phase-2', district:'Pune',
-    desc:'Installation of smart streetlights, CCTV integration and pedestrian pathways. Contractor: IRCON. Expected benefits: reduced accidents, improved night safety.',
-    progress:70, date:'2025-12-05', trending:true, coords:[18.5204,73.8567]
-  },
-  { id:2, category:'law', title:'Single-use Plastic Restriction', district:'All',
-    desc:'Revised municipal rules to limit single-use plastics in markets and events; penal provisions defined and a phase-wise implementation plan.',
-    progress:null, date:'2025-12-03', trending:false, coords:[19.0760,72.8777]
-  },
-  { id:3, category:'notice', title:'Power Maintenance Notice (Sector 5)', district:'Mumbai',
-    desc:'Scheduled maintenance on 2025-12-10 from 17:00 to 20:00. Essential services to coordinate with authorities.',
-    progress:null, date:'2025-12-01', trending:true, coords:[19.0760,72.8777]
-  },
-  { id:4, category:'project', title:'Metro Phase-3 Planning', district:'Nagpur',
-    desc:'Feasibility studies completed. Public hearing scheduled. Land acquisition starts after hearings.',
-    progress:20, date:'2025-11-28', trending:false, coords:[21.1458,79.0882]
-  },
-  { id:5, category:'project', title:'Community Water Tanks Revamp', district:'Nashik',
-    desc:'Repair and chlorination cycles improved. Budget allocated for 2026.',
-    progress:45, date:'2025-11-30', trending:true, coords:[19.9975,73.7898]
-  }
-];
-
+window.onload = async () => {
+const res = await fetch("http://localhost:3000/api/all-issues");
+const issues = (await res.json()).issues;
 /* App state */
-let visible = [...updates];
+let visible = [...issues];
 let category = 'all';
 let map, markers = [];
 
@@ -387,6 +368,7 @@ function renderUpdatesGrid(list){
   }
 
   list.forEach(u => {
+    console.log(u);
     const card = document.createElement('article');
     card.className = 'update-card';
     // border color
@@ -396,26 +378,17 @@ function renderUpdatesGrid(list){
     card.innerHTML = `
       <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
         <div style="flex:1;">
-          <div style="font-weight:700; font-size:16px;">${escapeHtml(u.title)} ${u.trending ? '<span class="tag-trend ms-2">TRENDING</span>' : ''}</div>
-          <div class="small-muted" style="margin-top:6px;">${escapeHtml(u.district)} • ${u.category.toUpperCase()} • ${formatDate(u.date)}</div>
+          <div style="font-weight:700; font-size:16px;">${escapeHtml(u.title)}</div>
+          <div class="small-muted" style="margin-top:6px;">${formatDate(u.createdAt)}</div>
           <p class="small-muted" style="margin-top:8px;">${escapeHtml(shorten(u.desc,190))}</p>
-          <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-primary" onclick="openDetails(${u.id})">Details</button>
-            <button class="btn btn-sm btn-outline-secondary" onclick="shareUpdate(${u.id})">Share</button>
-          </div>
-        </div>
-        <div style="min-width:140px; text-align:right;">
-          ${u.progress !== null ? `<div class="small-muted">Progress</div>
-            <div style="height:9px; background:#eef9f3; border-radius:6px; overflow:hidden; margin-top:8px;">
-              <div style="width:${u.progress}%; height:100%; background:linear-gradient(90deg,#07b02b,#05a08b);"></div>
-            </div>
-            <div style="font-weight:700; margin-top:8px;">${u.progress}%</div>` : `<div class="small-muted">Type</div><div style="font-weight:700;margin-top:8px;">${escapeHtml(u.category)}</div>`}
         </div>
       </div>
     `;
     container.appendChild(card);
   });
 }
+renderUpdatesGrid(issues);
+
 
 /* Shorten text safely */
 function shorten(text, len=200){
@@ -583,7 +556,7 @@ el('districtSelect').addEventListener('change', function(){
 
 /* small helper: days since last sync (demo) */
 el('lastSync').innerText = new Date().toLocaleDateString('en-GB');
-
+}
   </script> 
 
   <!-- Details Modal -->

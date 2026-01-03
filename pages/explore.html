@@ -313,6 +313,7 @@
       <a href="add-issue.html" class="menu-item"
         ><i class="fa-solid fa-plus-circle"></i>Add Issues</a
       >
+      <a href="add-bill.html" class="menu-item"><i class="fa-solid fa-plus-circle"></i>Add Bills</a>
       <a href="janadicar-final.html" class="menu-item"
         ><i class="fa-solid fa-gavel"></i>Janadhikar</a
       >
@@ -418,6 +419,10 @@
                   <span class="status-badge status-${status}">${status}</span>
                 </div>
                 <div class="post-desc">${desc}</div>
+                <div class="post-comments">
+                  <h6>Comments:</h6>
+                  ${issue.comments?.length > 0 ? issue.comments.map(comment => `<p class="post-desc">${comment.text}</p>`).join('') : '<p>No comments yet.</p>'}
+                </div>
               </div>
             </div>
           `;
