@@ -294,7 +294,7 @@
             return;
           }
           const issue = await fetch(
-            "http://localhost:3000/api/citizen/issue/add",
+            "https://viraj-backend.onrender.com/api/citizen/issue/add",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -350,7 +350,7 @@
         if (!user) {
           document.getElementById("openIssueBtn").disabled = true;
         }
-        const res = await fetch("http://localhost:3000/api/all-issues");
+        const res = await fetch("https://viraj-backend.onrender.com/api/all-issues");
         const issues = (await res.json()).issues;
         issues.forEach((issue) => {
           addCard(issue.title, issue.desc, issue.pincode);

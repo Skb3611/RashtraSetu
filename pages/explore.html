@@ -379,7 +379,7 @@
 
       window.onload = async () => {
         try {
-          const res = await fetch("http://localhost:3000/api/all-issues");
+          const res = await fetch("https://viraj-backend.onrender.com/api/all-issues");
           const data = await res.json();
           issues = data.issues || [];
           renderIssues();

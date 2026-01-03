@@ -356,7 +356,7 @@
             return;
           }
           const bill = await fetch(
-            "http://localhost:3000/api/leader/bill/add",
+            "https://viraj-backend.onrender.com/api/leader/bill/add",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -430,7 +430,7 @@
         if (user && user.type !== "leader") {
           document.getElementById("openIssueBtn").disabled = true;
         }
-        const res = await fetch("http://localhost:3000/api/get-bills");
+        const res = await fetch("https://viraj-backend.onrender.com/api/get-bills");
         const issues = (await res.json()).bills;
         addCard(issues);
       };

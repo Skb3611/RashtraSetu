@@ -301,7 +301,7 @@ window.location.href="../index.html"
    Replace with real API calls in production
 --------------------------- */
 window.onload = async () => {
-const res = await fetch("http://localhost:3000/api/all-issues");
+const res = await fetch("https://viraj-backend.onrender.com/api/all-issues");
 const issues = (await res.json()).issues;
 /* App state */
 let visible = [...issues];

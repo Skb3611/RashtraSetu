@@ -463,7 +463,7 @@ async function login(){
         return;
     }
     console.log(type, mobile, password);
-    const url = type === 'citizen' ? "http://localhost:3000/api/auth/citizen/login" : "http://localhost:3000/api/auth/leader/login";
+    const url = type === 'citizen' ? "https://viraj-backend.onrender.com/api/auth/citizen/login" : "https://viraj-backend.onrender.com/api/auth/leader/login";
     const res = await fetch(url,{
         method:"POST",
         headers:{"Content-Type":"application/json"},
@@ -501,7 +501,7 @@ async function signup(){
 
     alert("Signup Successful! Logging in...");
     console.log(type, mobile, pin, password);
-    const url = type === 'citizen' ? "http://localhost:3000/api/auth/citizen/signup" : "http://localhost:3000/api/auth/leader/signup";
+    const url = type === 'citizen' ? "https://viraj-backend.onrender.com/api/auth/citizen/signup" : "https://viraj-backend.onrender.com/api/auth/leader/signup";
     const res = await fetch(url,{
         method:"POST",
         headers:{"Content-Type":"application/json"},

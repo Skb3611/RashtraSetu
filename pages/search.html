@@ -382,7 +382,7 @@
           .trim();
         if (input) {
           const res = await fetch(
-            `http://localhost:3000/api/get-issues-by-pincode/${input}`
+            `https://viraj-backend.onrender.com/api/get-issues-by-pincode/${input}`
           );
           const data = await res.json();
           if (data.issues.length > 0) {
