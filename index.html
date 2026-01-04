@@ -151,6 +151,11 @@ const renderIssue = (issues)=>{
             <div class="post-body">
               ${issue.desc}
             </div>
+            ${
+              issue.image
+                ? `<div class="post-image"><img src="${issue.image}" style="width:50% ;height:50%" alt="Post Image"></div>`
+                : ""
+            }
             <div class="post-actions">
               <button class="action-btn like-btn"><i class="fa-regular fa-heart"></i> <span>Like</span></button>
               <button onclick={comment("${issue.id}","issue")} class="action-btn comment-btn"><i class="fa-regular fa-comment"></i> <span>Comment</span></button>
@@ -186,6 +191,11 @@ const renderIssue = (issues)=>{
             <div class="post-body">
               ${bill.desc}
             </div>
+            ${
+              bill.image
+                ? `<div class="post-image"><img src="${bill.image}" style="width:50% ;height:50%" alt="Post Image"></div>`
+                : ""
+            }
             <div class="post-actions">
               <button class="action-btn like-btn"><i class="fa-regular fa-heart"></i> <span>Like</span></button>
               <button onclick={comment("${bill.id}","bill")} class="action-btn comment-btn"><i class="fa-regular fa-comment"></i> <span>Comment</span></button>
