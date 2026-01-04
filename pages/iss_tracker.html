@@ -151,6 +151,11 @@
           <p class="detail">
             <strong>Description:</strong> ${issue.desc}
           </p>
+          ${
+            issue.image
+              ? `<div class="post-image"><img src="${issue.image}" style="width:50% ;height:50%" alt="Post Image"></div>`
+              : ""
+          }
           <p class="detail"><strong>Date Reported:</strong> ${new Date(issue.createdAt).toLocaleString()}</p>
           <div class="comments-section">
             <h6>Comments:</h6>

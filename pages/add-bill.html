@@ -261,13 +261,13 @@
           localstorage.clear();
           window.location.href = "../index.html";
         }
-         window.onload = ()=> {
-         const user = JSON.parse(localStorage.getItem("user"));
-         console.log(user);
-         if (user && user.type !== "leader") {
-         document.getElementById("openIssueBtn").disabled = true;
-         }
-        }
+        window.onload = () => {
+          const user = JSON.parse(localStorage.getItem("user"));
+          console.log(user);
+          if (user && user.type !== "leader") {
+            document.getElementById("openIssueBtn").disabled = true;
+          }
+        };
       </script>
     </div>
 
@@ -316,6 +316,16 @@
                 rows="4"
                 placeholder="Describe the bill"
               ></textarea>
+              <label for="issueImage" class="form-label"
+                >Add image (optional):</label
+              >
+              <input
+                type="file"
+                accept="image/*"
+                id="billImage"
+                limit="1"
+                placeholder="Add image (optional)"
+              />
             </form>
           </div>
 
@@ -338,11 +348,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-       
       async function submitBill() {
         const billTitle = document.getElementById("issueTitle").value;
         const billBudget = document.getElementById("issueBudget").value;
         const billDesc = document.getElementById("issueDesc").value;
+        const billImage = document.getElementById("billImage").files[0];
         if (!billDesc.trim() || !billBudget.trim()) {
           alert("Description and Budget required");
           return;
@@ -355,20 +365,19 @@
             alert("Login required");
             return;
           }
-          const bill = await fetch(
-            "https://viraj-backend.onrender.com/api/leader/bill/add",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                number: user.number,
-                name: billTitle,
-                desc: billDesc,
-                budget: billBudget,
-              }),
-            }
-          );
-          if (bill.status !== 201) {
+          const formData = new FormData();
+          formData.append("number", user.number);
+          formData.append("name", billTitle);
+          formData.append("desc", billDesc);
+          formData.append("budget", billBudget);
+          if (billImage) {
+            formData.append("image", billImage);
+          }
+          const res = await fetch("https://viraj-backend.onrender.com/api/leader/bill/add", {
+            method: "POST",
+            body: formData,
+          });
+          if (res.status !== 201) {
             alert("Error submitting bill");
             return;
           }
@@ -399,6 +408,11 @@
             <div class="post-body">
               ${bill.desc}
             </div>
+            ${
+              bill.image
+                ? `<div class="post-image"><img src="${bill.image}" style="width:50% ;height:50%" alt="Post Image"></div>`
+                : ""
+            }
             <div class="post-comments">
                 <span style="font-weight:700">Comments</span>
                ${
@@ -410,7 +424,7 @@
                   <div>${comment.text}</div>
                 </div>
                 `;
-                       })
+                       }) 
                        .join("")
                    : "<div class='empty-hint'>No comments yet</div>"
                }

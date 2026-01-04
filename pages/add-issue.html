@@ -187,7 +187,9 @@
       <a href="add-issue.html" class="menu-item"
         ><i class="fa-solid fa-plus-circle"></i>Add Issues</a
       >
-      <a href="add-bill.html" class="menu-item"><i class="fa-solid fa-plus-circle"></i>Add Bills</a>
+      <a href="add-bill.html" class="menu-item"
+        ><i class="fa-solid fa-plus-circle"></i>Add Bills</a
+      >
       <a href="janadicar-final.html" class="menu-item"
         ><i class="fa-solid fa-gavel"></i>Janadhikar</a
       >
@@ -225,9 +227,7 @@
       <div class="app-wrap">
         <h1 class="app-title">People’s Voice</h1>
 
-        <div id="voiceSection">
-         
-        </div>
+        <div id="voiceSection"></div>
       </div>
     </div>
 
@@ -256,6 +256,16 @@
                 rows="4"
                 placeholder="Describe the issue"
               ></textarea>
+              <label for="issueImage" class="form-label"
+                >Add image (optional):</label
+              >
+              <input
+                type="file"
+                accept="image/*"
+                id="issueImage"
+                limit="1"
+                placeholder="Add image (optional)"
+              />
             </form>
           </div>
 
@@ -281,6 +291,7 @@
       async function submitIssue() {
         const issueTitle = document.getElementById("issueTitle").value;
         const issueDesc = document.getElementById("issueDesc").value;
+        const img = document.getElementById("issueImage").files[0];
         if (!issueDesc.trim()) {
           alert("Description required");
           return;
@@ -293,24 +304,32 @@
             alert("Login required");
             return;
           }
-          const issue = await fetch(
+          const formData = new FormData();
+          formData.append("number", user.number);
+          formData.append("title", issueTitle);
+          formData.append("desc", issueDesc);
+          formData.append("pincode", user.pincode);
+          if (img) {
+            formData.append("image", img);
+          }
+         console.log(Object.fromEntries(formData));
+
+          const res = await fetch(
             "https://viraj-backend.onrender.com/api/citizen/issue/add",
             {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                number: user.number,
-                title: issueTitle,
-                desc: issueDesc,
-                pincode: user.pincode,
-              }),
+              body: formData,
             }
           );
-          if (issue.status !== 201) {
+          if (res.status !== 201) {
             alert("Error submitting issue");
             return;
           }
-          addCard(issueTitle, issueDesc, user.pincode);
+          const issue = await res.json();
+          console.log(issue);
+          addCard(issueTitle, issueDesc, user.pincode, issue.issue.image);
+          // issueModal.hide();
+          // issueForm.reset();
         }
       }
       const issueModal = new bootstrap.Modal(
@@ -318,27 +337,31 @@
       );
       document.getElementById("openIssueBtn").onclick = () => issueModal.show();
 
-
-      function addCard(title, desc, pincode) {
+      function addCard(title, desc, pincode, image) {
         const card = document.createElement("div");
         card.className = "post-card";
         card.innerHTML = `
-      <div class="post-header">
-        <div class="avatar">CR</div>
-        <div>
-          <b>Citizen Report</b><br>
-        </div>
-      </div>
-      <div class="mt-2">
-        ${title ? "<b>" + title + "</b><br>" : ""}
-        ${desc}
-        ${
-          pincode
-            ? "<div><small><b>Area:</b> " + pincode + "</small></div>"
-            : ""
-        }
-      </div>
-    `;
+            <div class="post-header">
+              <div class="avatar">CR</div>
+              <div>
+                <b>Citizen Report</b><br>
+              </div>
+            </div>
+            <div class="mt-2">
+              ${title ? "<b>" + title + "</b><br>" : ""}
+              ${desc}
+              ${
+                pincode
+                ? "<div><small><b>Area:</b> " + pincode + "</small></div>"
+                : ""
+                }
+                ${
+                  image
+                    ? `<img src="${image}" style="max-height: 200px;" alt="Issue Image" class="img-fluid mb-2">`
+                    : ""
+                }
+            </div>
+          `;
         document.getElementById("voiceSection").appendChild(card);
         issueModal.hide();
         issueForm.reset();
@@ -353,7 +376,7 @@
         const res = await fetch("https://viraj-backend.onrender.com/api/all-issues");
         const issues = (await res.json()).issues;
         issues.forEach((issue) => {
-          addCard(issue.title, issue.desc, issue.pincode);
+          addCard(issue.title, issue.desc, issue.pincode, issue.image);
         });
       };
     </script>
