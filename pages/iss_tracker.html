@@ -132,38 +132,37 @@
         const issueContainer = document.getElementById("issuesContainer");
         issueContainer.innerHTML = issues.map(renderCard).join("");
       };
-      const renderCard = (issue) => {
-        return `
-              <div
-          class="col-md-6 issue-card"
-          data-title="${issue.title}"
-          data-status="${issue.status}"
-          data-category="${issue.category}"
-          data-area="${issue.area}"
-          data-officer="${issue.officer}"
-        >
-          <h5>Issue ID: #${issue.id}</h5>
-          <p class="detail"><strong>Title:</strong> ${issue.title}</p>
-          <p class="detail">
-            <strong>Status:</strong> <span class="status-${issue.status.toLowerCase()}">${issue.status}</span>
-          </p>
-          <p class="detail"><strong>Pincode:</strong> ${issue.pincode}</p>
-          <p class="detail">
-            <strong>Description:</strong> ${issue.desc}
-          </p>
-          ${
-            issue.image
-              ? `<div class="post-image"><img src="${issue.image}" style="width:50% ;height:50%" alt="Post Image"></div>`
-              : ""
-          }
-          <p class="detail"><strong>Date Reported:</strong> ${new Date(issue.createdAt).toLocaleString()}</p>
-          <div class="comments-section">
-            <h6>Comments:</h6>
-            ${issue.comments.length > 0 ? issue.comments.map(comment => `<p>${comment.text}</p>`).join('') : '<p>No comments yet.</p>'}
-          </div>
-        </div>
-        `;
-      };
+const renderCard = (issue) => {
+  return `
+    <div
+      class="col-md-6 issue-card"
+      data-status="${issue.status.toLowerCase()}"
+      data-pincode="${issue.pincode}"
+      data-date="${issue.createdAt}"
+    >
+      <h5>Issue ID: #${issue.id}</h5>
+
+      <p class="detail"><strong>Title:</strong> ${issue.title}</p>
+
+      <p class="detail">
+        <strong>Status:</strong>
+        <span class="status-${issue.status.toLowerCase()}">
+          ${issue.status.replace("_", " ").toUpperCase()}
+        </span>
+      </p>
+
+      <p class="detail"><strong>Pincode:</strong> ${issue.pincode}</p>
+
+      <p class="detail"><strong>Description:</strong> ${issue.desc}</p>
+
+      <p class="detail">
+        <strong>Date:</strong>
+        ${new Date(issue.createdAt).toLocaleString()}
+      </p>
+    </div>
+  `;
+};
+
     </script>
 
     <!-- Header & Search -->
@@ -171,7 +170,7 @@
       <div class="search-box">
         <i class="fas fa-search"></i>
         <input id="searchInput" type="text" placeholder="Search Issue by ID" />
-        <button onclick="searchIssues()">Search</button>
+        <button onclick="applyFilters()">Search</button>
       </div>
     </div>
 
@@ -180,51 +179,41 @@
       <h2 class="text-center mb-5">Issue Tracker</h2>
 
       <!-- Filter Section -->
-      <div class="filter-section row g-3">
-        <div class="col-md-3">
-          <select
-            id="statusFilter"
-            class="form-select"
-            onchange="filterIssues()"
-          >
-            <option value="">All Status</option>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <select
-            id="categoryFilter"
-            class="form-select"
-            onchange="filterIssues()"
-          >
-            <option value="">All Categories</option>
-            <option value="Public Infrastructure">Public Infrastructure</option>
-            <option value="Health">Health</option>
-            <option value="Education">Education</option>
-            <option value="Transport">Transport</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <input
-            type="text"
-            id="areaFilter"
-            class="form-control"
-            placeholder="Filter by Area"
-            onkeyup="filterIssues()"
-          />
-        </div>
-        <div class="col-md-3">
-          <input
-            type="text"
-            id="officerFilter"
-            class="form-control"
-            placeholder="Filter by Officer"
-            onkeyup="filterIssues()"
-          />
-        </div>
-      </div>
+     <div class="filter-section row g-3 align-items-end">
+  <!-- Status -->
+  <div class="col-md-4">
+    <label class="form-label">Status</label>
+    <select id="statusFilter" class="form-select" onchange="applyFilters()">
+  <option value="">ALL</option>
+  <option value="OPEN">OPEN</option>
+  <option value="INPROGRESS">IN PROGRESS</option>
+  <option value="RESOLVED">RESOLVED</option>
+</select>
+
+  </div>
+
+  <!-- Pincode -->
+  <div class="col-md-4">
+    <label class="form-label">Pincode</label>
+    <input
+      type="text"
+      id="pincodeFilter"
+      class="form-control"
+      placeholder="Enter pincode"
+      onkeyup="applyFilters()"
+    />
+  </div>
+
+  <!-- Date Sort -->
+  <div class="col-md-4">
+    <label class="form-label">Sort by Date</label>
+    <select id="dateSort" class="form-select" onchange="applyFilters()">
+      <option value="recent">Recent First</option>
+      <option value="older">Older First</option>
+    </select>
+  </div>
+</div>
+
 
       <!-- Issue Cards Section -->
       <div class="row mt-4" id="issuesContainer">
@@ -237,44 +226,79 @@
     <script>
       // Filter & Search Function
       function filterIssues() {
-        let status = document
-          .getElementById("statusFilter")
-          .value.toLowerCase();
-        let category = document
-          .getElementById("categoryFilter")
-          .value.toLowerCase();
-        let area = document.getElementById("areaFilter").value.toLowerCase();
-        let officer = document
-          .getElementById("officerFilter")
-          .value.toLowerCase();
+  const status = document
+    .getElementById("statusFilter")
+    .value.toLowerCase();
 
-        const issues = document.querySelectorAll(".issue-card");
-        issues.forEach((issue) => {
-          let match = true;
-          if (status && issue.dataset.status.toLowerCase() !== status)
-            match = false;
-          if (category && issue.dataset.category.toLowerCase() !== category)
-            match = false;
-          if (area && !issue.dataset.area.toLowerCase().includes(area))
-            match = false;
-          if (officer && !issue.dataset.officer.toLowerCase().includes(officer))
-            match = false;
-          issue.style.display = match ? "block" : "none";
-        });
-      }
+  const cards = document.querySelectorAll(".issue-card");
 
-      function searchIssues() {
-        const query = document
-          .getElementById("searchInput")
-          .value.toLowerCase();
-        const issues = document.querySelectorAll(".issue-card");
-        issues.forEach((issue) => {
-          const title = issue.dataset.title.toLowerCase();
-          const id = issue.querySelector("h5").innerText.toLowerCase();
-          issue.style.display =
-            title.includes(query) || id.includes(query) ? "block" : "none";
-        });
-      }
+  cards.forEach(card => {
+    const cardStatus = card.dataset.status;
+    const match = !status || cardStatus === status;
+    card.style.display = match ? "block" : "none";
+  });
+}
+
+
+
+function applyFilters() {
+  const statusValue = document
+    .getElementById("statusFilter")
+    .value
+    .toUpperCase();
+
+  const pincodeValue = document
+    .getElementById("pincodeFilter")
+    .value
+    .trim();
+
+  const idQuery = document
+    .getElementById("searchInput")
+    .value
+    .trim()
+    .toLowerCase();
+
+  const dateSort = document.getElementById("dateSort").value;
+
+  let filtered = [...issues];
+
+  // ✅ FILTER BY STATUS (ALL CAPS)
+  if (statusValue && statusValue !== "ALL") {
+    filtered = filtered.filter(
+      (i) => i.status.toUpperCase() === statusValue
+    );
+  }
+
+  // ✅ FILTER BY PINCODE
+  if (pincodeValue) {
+    filtered = filtered.filter((i) =>
+      i.pincode.includes(pincodeValue)
+    );
+  }
+
+  // ✅ SEARCH BY ISSUE ID (partial UUID supported)
+  if (idQuery) {
+    filtered = filtered.filter((i) =>
+      i.id.toLowerCase().includes(idQuery)
+    );
+  }
+
+  // ✅ SORT BY DATE
+  filtered.sort((a, b) => {
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+    return dateSort === "recent"
+      ? dateB - dateA
+      : dateA - dateB;
+  });
+
+  // ✅ RE-RENDER
+  document.getElementById("issuesContainer").innerHTML =
+    filtered.length
+      ? filtered.map(renderCard).join("")
+      : "<p class='text-center'>No issues found</p>";
+}
+
     </script>
   </body>
 </html>
