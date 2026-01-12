@@ -12,9 +12,11 @@
 
     <style>
         .rs-card {
-            background: #ffffff;
+            background: #0f1419;
+            /* dark surface */
             border-radius: 14px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid #2f3336;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
             overflow: hidden;
             height: 100%;
         }
@@ -23,45 +25,56 @@
             width: 100%;
             height: 180px;
             object-fit: cover;
+            border-bottom: 1px solid #2f3336;
         }
 
         .rs-card-body {
             padding: 16px;
         }
 
+        /* Title */
         .rs-title {
             font-weight: 700;
             font-size: 16px;
-            color: #06314a;
+            color: #e7e9ea;
+            /* primary text */
             margin-bottom: 6px;
         }
 
+        /* Description */
         .rs-desc {
             font-size: 14px;
-            color: #6c757d;
+            color: #9aa4ad;
+            /* secondary text */
             margin-bottom: 10px;
+            line-height: 1.5;
         }
 
+        /* Meta text */
         .rs-meta {
             font-size: 12px;
-            color: #8a97a3;
+            color: #71767b;
             margin-bottom: 8px;
         }
 
+        /* Footer */
         .rs-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 13px;
-            color: #6c757d;
+            color: #71767b;
         }
 
+        /* Badge base */
         .rs-badge {
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
+            letter-spacing: 0.3px;
         }
+
 
         .status-open {
             background: #ffe5e5;
@@ -555,9 +568,9 @@
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                        },body: JSON.stringify({
-                          number: user.number,
-                          id: itemId  
+                        }, body: JSON.stringify({
+                            number: user.number,
+                            id: itemId
                         })
                     });
 
@@ -622,7 +635,7 @@
               </span>
 
               <span>
-                ❤️ ${issue.likes} &nbsp; 💬 ${issue.comments?.length ||0}
+                ❤️ ${issue.likes} &nbsp; 💬 ${issue.comments?.length || 0}
               </span>
               <button 
   class="btn btn-sm btn-outline-danger"
